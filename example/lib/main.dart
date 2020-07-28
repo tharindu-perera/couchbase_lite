@@ -44,7 +44,7 @@ class _ExampleAppState extends State<ExampleApp> {
     // Note wss://10.0.2.2:4984/my-database is for the android simulator on your local machine's couchbase database
     // Create replicators to push and pull changes to and from the cloud.
 //    ReplicatorConfiguration config = ReplicatorConfiguration(database, "ws://10.0.2.2:4984/scy");
-    ReplicatorConfiguration config = ReplicatorConfiguration(database, "ws://192.168.8.102:4984/scy");
+    ReplicatorConfiguration config = ReplicatorConfiguration(database, "ws://192.168.8.101:4984/scy");
 //    ReplicatorConfiguration config = ReplicatorConfiguration(database, "ws://10.16.32.115:4984/scy");
 //    ReplicatorConfiguration(database, "ws://10.16.32.115:4984/scy");
     config.replicatorType = ReplicatorType.pushAndPull;
@@ -99,12 +99,12 @@ class _ExampleAppState extends State<ExampleApp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               RaisedButton(
-                child: Text('Add  Document'),
+                child: Text('Add  Document '),
                 // ignore: missing_return
                 onPressed: () {
                   try {
                     var mutableDoc = MutableDocument( id: "2", data: {"equip_num": 3333, "equip_init": "AM", "org": "AM", "screen": "LISTVIEW", "flag": "fmob"});
-                    database.saveDocument(mutableDoc, concurrencyControl: ConcurrencyControl.lastWriteWins).then((value) {
+                    database.saveDocument(mutableDoc, concurrencyControl: ConcurrencyControl.failOnConflict).then((value) {
                       print("value>>" + value.toString());
                       return value;
                     }, onError: (err) {
@@ -148,10 +148,12 @@ class _ExampleAppState extends State<ExampleApp> {
                   // Run the query.
                   try {
                     result = await query.execute();
+                    result.elementAt(0).
                     print("Number of rows :: ${result .allResults() .length}");
 //                    result.allResults().forEach((result) => print(result.toList().toString()));
                     doc = await database.document("doc05");
                     print(" doc05 >>>" + doc.toMap().toString());
+                    print(" doc05 >>>" + doc.id);
                   } catch (err) {
                     print("**********Error Fetching document $err");
                   }

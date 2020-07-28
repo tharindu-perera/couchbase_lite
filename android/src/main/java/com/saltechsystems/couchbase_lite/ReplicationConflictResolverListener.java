@@ -1,5 +1,8 @@
 package com.saltechsystems.couchbase_lite;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.couchbase.lite.Conflict;
 import com.couchbase.lite.ConflictResolver;
 import com.couchbase.lite.Document;
@@ -38,7 +41,12 @@ public class ReplicationConflictResolverListener implements EventChannel.StreamH
     @Override
     public Document resolve(final Conflict conflict) {
         try {
-            mEventSink.success("conflict doc ID : " + conflict.getDocumentId());
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    mEventSink.success("conflict doc ID : "+conflict.getDocumentId()+" rev:"+conflict.getRemoteDocument().getRevisionID());
+                }
+            });
         } catch (Exception e) {
             System.err.println(">>>>> ERROR : " + e.getMessage());
             e.printStackTrace();
